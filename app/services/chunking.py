@@ -1,4 +1,5 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 
 
 def chunk_text(text: str, chunk_size: int = 500, chunk_overlap: int = 50) -> list[str]:
