@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 
 from app.services.ingestion import extract_text
+from app.services.chunking import chunk_text
+from app.services.vectorstore import add_chunks
 
 app = FastAPI(title="GenAI Doc Assistant")
 
@@ -23,7 +25,7 @@ def health_check():
 @app.post("/upload-document")
 async def upload_document(file: UploadFile = File(...)):
     """
-    Validates, saves, and extracts text from an uploaded document.
+    Validates, saves, extracts, chunks, embeds, and stores an uploaded document.
     """
     # 1. Validate extension
     extension = Path(file.filename).suffix.lower()
@@ -45,19 +47,31 @@ async def upload_document(file: UploadFile = File(...)):
     save_path = DATA_DIR / file.filename
     save_path.write_bytes(contents)
 
-    # 4. Extract text using the ingestion service
+    # 4. Extract text
     try:
         extracted_text = extract_text(str(save_path))
     except Exception as e:
         raise HTTPException(status_code=422, detail=f"Failed to extract text: {e}")
+
+    # 5. Chunk the extracted text
+    chunks = chunk_text(extracted_text)
+    if not chunks:
+        raise HTTPException(status_code=422, detail="No text could be extracted/chunked from this file.")
+
+    # 6. Embed and store in ChromaDB
+    try:
+        stored_count = add_chunks(chunks, filename=file.filename)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to embed/store chunks: {e}")
 
     return {
         "filename": file.filename,
         "content_type": file.content_type,
         "size_bytes": len(contents),
         "saved_to": str(save_path),
-        "extracted_preview": extracted_text[:300],
         "extracted_length": len(extracted_text),
+        "chunks_created": len(chunks),
+        "chunks_stored": stored_count,
     }
 
 
