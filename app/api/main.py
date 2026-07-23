@@ -5,6 +5,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from app.services.ingestion import extract_text
 from app.services.chunking import chunk_text
 from app.services.vectorstore import add_chunks
+from app.services.rag import answer_question
 
 app = FastAPI(title="GenAI Doc Assistant")
 
@@ -77,8 +78,10 @@ async def upload_document(file: UploadFile = File(...)):
 
 @app.post("/ask-question")
 async def ask_question(question: str = Form(...)):
-    """Accepts a question string and (eventually) returns an answer from the RAG pipeline."""
+    """Answers a question using RAG: retrieves relevant chunks and generates a grounded answer."""
+    result = answer_question(question)
     return {
         "question": question,
-        "answer": "TODO: wire this up to the RAG pipeline",
+        "answer": result["answer"],
+        "sources": result["sources"],
     }
