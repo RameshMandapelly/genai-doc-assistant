@@ -13,7 +13,7 @@ _MODEL = "llama-3.1-8b-instant"
 def answer_question(question: str, top_k: int = 4) -> dict:
     store = get_vectorstore()
     results_with_scores = store.similarity_search_with_score(question, k=top_k)
-    RELEVANCE_THRESHOLD = 1.0  # lower distance = more similar
+    RELEVANCE_THRESHOLD = 1.8  # lower distance = more similar
    
     results = [doc for doc, score in results_with_scores if score < RELEVANCE_THRESHOLD]
 

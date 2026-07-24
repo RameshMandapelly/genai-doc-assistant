@@ -1,0 +1,9 @@
+2026-07-24 16:03:55 | INFO     | app.core.orchestrator | Pipeline complete: question="What is the candidate's educational background?" retrieved=3 grounded=True
+2026-07-24 16:03:55 | INFO     | app.api.main | Answered /ask-agent: "What is the candidate's educational background?"
+2026-07-24 16:29:23 | INFO     | app.core.orchestrator | Pipeline complete: question='what is the candidate college name' retrieved=3 grounded=True
+2026-07-24 16:29:23 | INFO     | app.api.main | Answered /ask-agent: 'what is the candidate college name'
+2026-07-24 16:43:45 | INFO     | app.core.orchestrator | Pipeline complete: question='what is the candidate college name' retrieved=3 grounded=False
+2026-07-24 16:43:45 | INFO     | app.api.main | Answered /ask-agent: question='what is the candidate college name' answer="I don't know based on the uploaded documents (the draft answer could not be verified against the retrieved context)."
+2026-07-24 16:43:45 | INFO     | app.api.main | POST /ask-agent -> 200 (1044.3ms)
+2026-07-24 16:44:38 | WARNING  | app.api.main | Rejected question (too long, len=1005): '2026-07-24 16:03:55 | INFO     | app.core.orchestrator | Pipeline complete: ques'...
+2026-07-24 16:44:38 | INFO     | app.api.main | POST /ask-agent -> 400 (2.1ms)
